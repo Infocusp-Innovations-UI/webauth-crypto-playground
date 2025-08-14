@@ -1,0 +1,28 @@
+.home-container {
+  padding: 24px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+    Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.home-title {
+  margin-bottom: 12px;
+}
+
+.home-subtitle {
+  margin-top: 0;
+  color: #fff;
+}
+
+.home-links {
+  line-height: 1.9;
+  color: #fff;
+}
+
+.home-links a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.home-links a:hover {
+  text-decoration: underline;
+}
