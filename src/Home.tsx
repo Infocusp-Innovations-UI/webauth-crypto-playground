@@ -9,10 +9,13 @@ export default function Home() {
       <p className="home-subtitle">Choose a demo:</p>
       <ul className="home-links">
         <li>
-          <Link to="/hasing">Hashing Demo</Link>
+          <Link to="/hashing">Hashing Demo</Link>
         </li>
         <li>
           <Link to="/webauth">WebAuthn Registration</Link>
+        </li>
+        <li>
+          <Link to="/login">WebAuthn Login</Link>
         </li>
       </ul>
     </div>

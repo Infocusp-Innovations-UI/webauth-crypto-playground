@@ -5,6 +5,8 @@ import HashFlow from "./HashFlow";
 import Home from "./Home";
 import WebAuthnRegistration from "./WebAuthnRegistration";
 import "./index.css";
+import WebAuthnLogin from "./WebAuthnLogin";
+import { UserProvider } from "./UserContext";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Root element not found");
@@ -12,11 +14,14 @@ if (!rootElement) throw new Error("Root element not found");
 createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/hasing" element={<HashFlow />} />
-        <Route path="/webauth" element={<WebAuthnRegistration />} />
-      </Routes>
+      <UserProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/hashing" element={<HashFlow />} />
+          <Route path="/webauth" element={<WebAuthnRegistration />} />
+          <Route path="/login" element={<WebAuthnLogin />} />
+        </Routes>
+      </UserProvider>
     </BrowserRouter>
   </StrictMode>
 );

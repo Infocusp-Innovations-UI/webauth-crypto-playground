@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import "./simplewebauthn.css";
 import { WebAuthnCredential } from "@simplewebauthn/types";
 import {
@@ -8,19 +8,14 @@ import {
 } from "@simplewebauthn/server";
 import ReactJsonView from "@microlink/react-json-view";
 import { startRegistration } from "@simplewebauthn/browser";
-
-interface LoggedInUser {
-  id: string;
-  username: string;
-  credentials: WebAuthnCredential[];
-}
+import { useUserContext } from "./UserContext";
 
 const RP_ID = "localhost";
 const RP_NAME = "SimpleWebAuthn Example";
 const expectedOrigin = "http://localhost:5173";
 
 export default function WebAuthnRegistration() {
-  const [users, setUsers] = useState<LoggedInUser[]>([]);
+  const { users, setUsers } = useUserContext();
   const [username, setUsername] = useState("");
   const [registrationOptions, setRegistrationOptions] = useState<any>();
   const [authenticatorResponse, setAuthenticatorResponse] = useState<any>();
