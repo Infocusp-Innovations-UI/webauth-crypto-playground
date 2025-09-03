@@ -14,7 +14,7 @@ createRoot(rootElement).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/hasing" element={<HashFlow />} />
+        <Route path="/hashing" element={<HashFlow />} />
         <Route path="/webauth" element={<WebAuthnRegistration />} />
       </Routes>
     </BrowserRouter>
