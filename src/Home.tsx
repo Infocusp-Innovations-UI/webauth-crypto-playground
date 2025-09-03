@@ -14,6 +14,9 @@ export default function Home() {
         <li>
           <Link to="/webauth">WebAuthn Registration</Link>
         </li>
+        <li>
+          <Link to="/login">WebAuthn Login</Link>
+        </li>
       </ul>
     </div>
   );
