@@ -5,7 +5,7 @@
   flex-direction: column;
 }
 
-.nodeCard {
+.webauthn-flow-container .nodeCard {
   width: 280px;
   border-radius: 8px;
   background: #2e2e2e;
@@ -14,7 +14,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
-.node-header {
+.webauthn-flow-container .node-header {
   font-weight: 800;
   letter-spacing: 1px;
   padding: 8px 12px;
@@ -24,44 +24,44 @@
   text-align: center;
 }
 
-.node-header--blue {
+.webauthn-flow-container .node-header--blue {
   background: #1976d2;
 }
 
-.node-header--orange {
+.webauthn-flow-container .node-header--orange {
   background: #f57c00;
 }
 
-.node-header--purple {
+.webauthn-flow-container .node-header--purple {
   background: #7b1fa2;
 }
 
-.node-header--red {
+.webauthn-flow-container .node-header--red {
   background: #c62828;
 }
 
-.node-header--green {
+.webauthn-flow-container .node-header--green {
   background: #2e7d32;
 }
 
-.node-header--teal {
+.webauthn-flow-container .node-header--teal {
   background: #00695c;
 }
 
-.node-header--yellow {
+.webauthn-flow-container .node-header--yellow {
   background: #f9a825;
   color: #000;
 }
 
-.node-body {
+.webauthn-flow-container .node-body {
   padding: 12px;
   background: #1f1f1f;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 }
 
-.node-input,
-.node-select {
+.webauthn-flow-container .node-input,
+.webauthn-flow-container .node-select {
   width: 100%;
   padding: 8px 10px;
   border-radius: 6px;
@@ -73,14 +73,14 @@
   box-sizing: border-box;
 }
 
-.node-input:focus,
-.node-select:focus {
+.webauthn-flow-container .node-input:focus,
+.webauthn-flow-container .node-select:focus {
   outline: none;
   border-color: #1976d2;
   box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
 }
 
-.node-label {
+.webauthn-flow-container .node-label {
   display: block;
   font-size: 11px;
   font-weight: 600;
@@ -88,7 +88,7 @@
   margin-bottom: 2px;
 }
 
-.node-button {
+.webauthn-flow-container .node-button {
   width: 100%;
   padding: 8px 12px;
   border-radius: 6px;
@@ -101,18 +101,18 @@
   transition: all 0.2s ease;
 }
 
-.node-button:hover:not(:disabled) {
+.webauthn-flow-container .node-button:hover:not(:disabled) {
   background: #1565c0;
   transform: translateY(-1px);
 }
 
-.node-button:disabled {
+.webauthn-flow-container .node-button:disabled {
   background: #555;
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-.node-output {
+.webauthn-flow-container .node-output {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
   font-size: 11px;
