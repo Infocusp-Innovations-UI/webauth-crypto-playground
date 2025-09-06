@@ -12,7 +12,7 @@ export default function Home() {
           <Link to="/hashing">Hashing Demo</Link>
         </li>
         <li>
-          <Link to="/webauth">WebAuthn Registration</Link>
+          <Link to="/registration">WebAuthn Registration</Link>
         </li>
         <li>
           <Link to="/login">WebAuthn Login</Link>

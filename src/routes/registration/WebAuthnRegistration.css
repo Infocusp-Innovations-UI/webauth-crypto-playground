@@ -1,0 +1,141 @@
+.webauthn-flow-container {
+  width: 100%;
+  height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+}
+
+.nodeCard {
+  width: 280px;
+  border-radius: 8px;
+  background: #2e2e2e;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.node-header {
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.node-header--blue {
+  background: #1976d2;
+}
+
+.node-header--orange {
+  background: #f57c00;
+}
+
+.node-header--purple {
+  background: #7b1fa2;
+}
+
+.node-header--red {
+  background: #c62828;
+}
+
+.node-header--green {
+  background: #2e7d32;
+}
+
+.node-header--teal {
+  background: #00695c;
+}
+
+.node-header--yellow {
+  background: #f9a825;
+  color: #000;
+}
+
+.node-body {
+  padding: 12px;
+  background: #1f1f1f;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.node-input,
+.node-select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #2b2b2b;
+  color: #fff;
+  font-size: 12px;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+.node-input:focus,
+.node-select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.node-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ccc;
+  margin-bottom: 2px;
+}
+
+.node-button {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #1976d2;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.node-button:hover:not(:disabled) {
+  background: #1565c0;
+  transform: translateY(-1px);
+}
+
+.node-button:disabled {
+  background: #555;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.node-output {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 11px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  background: #2b2b2b;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* //used in WebAuthnRegistration-old */
+.name-input {
+  width: 20%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #2b2b2b;
+  color: #fff;
+}

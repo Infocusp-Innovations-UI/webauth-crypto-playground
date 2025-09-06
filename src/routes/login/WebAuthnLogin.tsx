@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import "./simplewebauthn.css";
+import "./WebAuthnLogin.css";
 import {
   generateAuthenticationOptions,
   GenerateAuthenticationOptionsOpts,
@@ -8,10 +8,9 @@ import {
   VerifyAuthenticationResponseOpts,
 } from "@simplewebauthn/server";
 import ReactJsonView from "@microlink/react-json-view";
-import {
-  startAuthentication,
-} from "@simplewebauthn/browser";
-import { useUserContext } from "./UserContext";
+import { startAuthentication } from "@simplewebauthn/browser";
+import { useUserContext } from "../../context/UserContext";
+import React from "react";
 
 const RP_ID = "localhost";
 const expectedOrigin = "http://localhost:5173";

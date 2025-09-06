@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo, useState, useContext } from "react";
-import ReactFlow, { Background, Controls, Handle, Position } from "reactflow";
-import "reactflow/dist/style.css";
-import { getHashSteps } from "./getHash";
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  Handle,
+  Position,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { getHashSteps } from "../../util/getHash";
 import "./HashFlow.css";
 
 const HashContext = React.createContext({
