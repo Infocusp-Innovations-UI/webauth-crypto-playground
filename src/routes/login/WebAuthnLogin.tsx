@@ -11,6 +11,7 @@ import ReactJsonView from "@microlink/react-json-view";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { useUserContext } from "../../context/UserContext";
 import React from "react";
+import Header from "../../component/Header";
 
 const RP_ID = "localhost";
 const expectedOrigin = "http://localhost:5173";
@@ -115,54 +116,57 @@ export default function WebAuthnLogin() {
   }, [username, users, authenticatorResponse, loginOptions, setUsers]);
 
   return (
-    <div>
-      <ReactJsonView src={users} style={{ background: "white" }} />
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <div
-          style={{
-            flexBasis: "50%",
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
-          }}
-        >
-          <h2>Frontend</h2>
+    <>
+      <Header />
+      <div>
+        <ReactJsonView src={users} style={{ background: "white" }} />
+        <div style={{ display: "flex", flexDirection: "row" }}>
           <div
             style={{
+              flexBasis: "50%",
               display: "flex",
-              gap: "10px",
-              alignItems: "center",
+              flexDirection: "column",
+              gap: 20,
             }}
           >
-            Username
-            <input
-              className="name-input"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Type text here"
+            <h2>Frontend</h2>
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                alignItems: "center",
+              }}
+            >
+              Username
+              <input
+                className="name-input"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Type text here"
+              />
+              <button onClick={createLoginOptions}>Create Login Options</button>
+            </div>
+            <button
+              onClick={createloginResponse}
+              style={{ width: "fit-content" }}
+            >
+              Start Registration
+            </button>
+            <ReactJsonView
+              src={authenticatorResponse}
+              style={{ background: "white" }}
             />
-            <button onClick={createLoginOptions}>Create Login Options</button>
+            <button onClick={verifyResponse} style={{ width: "fit-content" }}>
+              Verify
+            </button>
           </div>
-          <button
-            onClick={createloginResponse}
-            style={{ width: "fit-content" }}
-          >
-            Start Registration
-          </button>
-          <ReactJsonView
-            src={authenticatorResponse}
-            style={{ background: "white" }}
-          />
-          <button onClick={verifyResponse} style={{ width: "fit-content" }}>
-            Verify
-          </button>
-        </div>
-        <div style={{ flexBasis: "50%" }}>
-          <h2>Backend</h2>
-          <ReactJsonView src={loginOptions} style={{ background: "white" }} />
+          <div style={{ flexBasis: "50%" }}>
+            <h2>Backend</h2>
+            <ReactJsonView src={loginOptions} style={{ background: "white" }} />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

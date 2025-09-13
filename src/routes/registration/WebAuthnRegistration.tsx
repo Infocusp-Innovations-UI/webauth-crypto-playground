@@ -20,23 +20,15 @@ import {
   WebAuthnRegistrationProvider,
 } from "../../context/WebAuthnRegistrationContext";
 import "./WebAuthnRegistration.css";
+import Header from "../../component/Header";
 
 const RP_ID = "localhost";
 const RP_NAME = "infocusp.com";
 const expectedOrigin = "http://localhost:5173";
 
-function PublicKeyGenerateNode() {
-  const {
-    username,
-    setUsername,
-    rpName,
-    setRpName,
-    challenge,
-    setChallenge,
-    registrationOptions,
-    setRegistrationOptions,
-  } = useWebAuthnRegistrationContext();
-  const { users } = useUserContext();
+function UserInputNode() {
+  const { username, setUsername, rpName, setRpName, challenge, setChallenge } =
+    useWebAuthnRegistrationContext();
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
@@ -54,6 +46,63 @@ function PublicKeyGenerateNode() {
     }
     setChallenge(result);
   }, [setChallenge]);
+
+  return (
+    <div className="nodeCard">
+      <div className="node-header node-header--purple">
+        PUBLIC KEY INPUT (CLIENT)
+      </div>
+      <div className="node-body">
+        <div style={{ marginBottom: "10px" }}>
+          <label className="node-label">Username</label>
+          <input
+            className="node-input"
+            type="text"
+            value={username}
+            onChange={handleUsernameChange}
+            placeholder="Enter username"
+            onMouseDown={(e) => e.stopPropagation()}
+          />
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label className="node-label">RP Name</label>
+          <input
+            className="node-input"
+            type="text"
+            value={rpName}
+            onChange={handleRpNameChange}
+            placeholder="Enter RP name"
+            onMouseDown={(e) => e.stopPropagation()}
+          />
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <button
+            className="node-button"
+            onClick={generateChallenge}
+            disabled={!username || !rpName}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            Generate Challenge
+          </button>
+        </div>
+        <div className="node-output">
+          Challenge: {challenge ? `${challenge}... ✓` : "Not generated"}
+        </div>
+      </div>
+      <Handle type="source" position={Position.Right} />
+    </div>
+  );
+}
+
+function PublicKeyGenerateNode() {
+  const {
+    username,
+    rpName,
+    challenge,
+    registrationOptions,
+    setRegistrationOptions,
+  } = useWebAuthnRegistrationContext();
+  const { users } = useUserContext();
 
   const createPublicKeyOptions = useCallback(async () => {
     if (!username || !rpName) {
@@ -89,55 +138,15 @@ function PublicKeyGenerateNode() {
 
     const options = await generateRegistrationOptions(opts);
     setRegistrationOptions(options);
-  }, [
-    username,
-    rpName,
-    challenge,
-    users,
-    setRegistrationOptions,
-    generateChallenge,
-  ]);
+  }, [username, rpName, challenge, users, setRegistrationOptions]);
 
   return (
     <div className="nodeCard">
-      <div className="node-header node-header--blue">PUBLIC KEY GENERATION</div>
+      <div className="node-header node-header--purple">
+        PUBLIC KEY GENERATION (CLIENT)
+      </div>
       <div className="node-body">
         <div style={{ marginBottom: "10px" }}>
-          <label className="node-label">Username</label>
-          <input
-            className="node-input"
-            type="text"
-            value={username}
-            onChange={handleUsernameChange}
-            placeholder="Enter username"
-            onMouseDown={(e) => e.stopPropagation()}
-          />
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label className="node-label">RP Name</label>
-          <input
-            className="node-input"
-            type="text"
-            value={rpName}
-            onChange={handleRpNameChange}
-            placeholder="Enter RP name"
-            onMouseDown={(e) => e.stopPropagation()}
-          />
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <button
-            className="node-button"
-            onClick={generateChallenge}
-            disabled={!username || !rpName}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            Generate Challenge
-          </button>
-        </div>
-        <div className="node-output">
-          Challenge: {challenge ? `${challenge}...` : "Not generated"}
-        </div>
-        <div style={{ marginBottom: "10px", marginTop: "10px" }}>
           <button
             className="node-button"
             onClick={createPublicKeyOptions}
@@ -151,6 +160,7 @@ function PublicKeyGenerateNode() {
           {registrationOptions ? "Public Key Created ✓" : "Click to generate"}
         </div>
       </div>
+      <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Right} />
     </div>
   );
@@ -180,7 +190,9 @@ function CredentialsNode() {
 
   return (
     <div className="nodeCard">
-      <div className="node-header node-header--red">CREATE CREDENTIALS</div>
+      <div className="node-header node-header--purple">
+        CREATE CREDENTIALS (CLIENT)
+      </div>
       <div className="node-body">
         <div style={{ marginBottom: "10px" }}>
           <button
@@ -209,11 +221,13 @@ function GeneratedCredentialsNode() {
 
   return (
     <div className="nodeCard">
-      <div className="node-header node-header--green">CREDENTIALS ID</div>
+      <div className="node-header node-header--purple">
+        CREDENTIALS ID (CLIENT)
+      </div>
       <div className="node-body">
         <div className="node-output">
           {authenticatorResponse
-            ? `ID: ${authenticatorResponse.id?.substring(0, 20)}...`
+            ? `ID: ${authenticatorResponse.id?.substring(0, 20)}... ✓`
             : "No credentials yet"}
         </div>
       </div>
@@ -277,7 +291,7 @@ function DatabaseSaveNode() {
 
   return (
     <div className="nodeCard">
-      <div className="node-header node-header--teal">DATABASE SAVE</div>
+      <div className="node-header node-header--yellow">DATABASE (SERVER)</div>
       <div className="node-body">
         <div className="node-output">
           {verificationResult?.verified
@@ -311,23 +325,19 @@ function VerifyNode() {
         expectedRPID: RP_ID,
         requireUserVerification: false,
       };
-      //const verification = await verifyRegistrationResponse(opts);
-      //setVerificationResult(verification);
-
-      //Temporary verifying on Frontend
-      setVerificationResult({ verified: true, error: null });
+      const verification = await verifyRegistrationResponse(opts);
+      console.log(verification);
+      setVerificationResult(verification);
     } catch (error) {
       const _error = error as Error;
       console.error("Registration verification failed:", _error);
-      //setVerificationResult({ verified: false, error: _error.message });
-      //Temporary verifying on Frontend
-      setVerificationResult({ verified: true, error: null });
+      setVerificationResult({ verified: false, error: _error.message });
     }
   }, [authenticatorResponse, registrationOptions, setVerificationResult]);
 
   return (
     <div className="nodeCard">
-      <div className="node-header node-header--yellow">VERIFY ON SERVER</div>
+      <div className="node-header node-header--yellow">VERIFY (SERVER)</div>
       <div className="node-body">
         <div style={{ marginBottom: "10px" }}>
           <button
@@ -352,6 +362,7 @@ function VerifyNode() {
 }
 
 const nodeTypes = {
+  userInputNode: UserInputNode,
   publicKeyGenerateNode: PublicKeyGenerateNode,
   credentialsNode: CredentialsNode,
   generatedCredentialsNode: GeneratedCredentialsNode,
@@ -371,36 +382,43 @@ const WebAuthnRegistration = () => {
     () => [
       {
         id: "n1",
-        type: "publicKeyGenerateNode",
+        type: "userInputNode",
         position: { x: 0, y: 0 },
         data: {},
         draggable: true,
       },
       {
         id: "n2",
-        type: "credentialsNode",
+        type: "publicKeyGenerateNode",
         position: { x: 350, y: 0 },
         data: {},
         draggable: true,
       },
       {
         id: "n3",
-        type: "generatedCredentialsNode",
+        type: "credentialsNode",
         position: { x: 700, y: 0 },
         data: {},
         draggable: true,
       },
       {
         id: "n4",
-        type: "verifyNode",
-        position: { x: 375, y: 400 },
+        type: "generatedCredentialsNode",
+        position: { x: 1050, y: 0 },
         data: {},
         draggable: true,
       },
       {
         id: "n5",
+        type: "verifyNode",
+        position: { x: 700, y: 400 },
+        data: {},
+        draggable: true,
+      },
+      {
+        id: "n6",
         type: "databaseSaveNode",
-        position: { x: 725, y: 300 },
+        position: { x: 1050, y: 300 },
         data: {},
         draggable: true,
       },
@@ -414,42 +432,46 @@ const WebAuthnRegistration = () => {
       { id: "e2-3", source: "n2", target: "n3", animated: true },
       { id: "e3-4", source: "n3", target: "n4", animated: true },
       { id: "e4-5", source: "n4", target: "n5", animated: true },
+      { id: "e5-6", source: "n5", target: "n6", animated: true },
     ],
     []
   );
 
   return (
-    <div className="webauthn-flow-container">
-      <WebAuthnRegistrationProvider
-        value={{
-          username,
-          setUsername,
-          rpName,
-          setRpName,
-          challenge,
-          setChallenge,
-          registrationOptions,
-          setRegistrationOptions,
-          authenticatorResponse,
-          setAuthenticatorResponse,
-          verificationResult,
-          setVerificationResult,
-        }}
-      >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          nodesDraggable={true}
-          nodesConnectable={false}
-          elementsSelectable={true}
-          proOptions={{ hideAttribution: true }}
+    <>
+      <Header />
+      <div className="webauthn-flow-container">
+        <WebAuthnRegistrationProvider
+          value={{
+            username,
+            setUsername,
+            rpName,
+            setRpName,
+            challenge,
+            setChallenge,
+            registrationOptions,
+            setRegistrationOptions,
+            authenticatorResponse,
+            setAuthenticatorResponse,
+            verificationResult,
+            setVerificationResult,
+          }}
         >
-          <Background />
-          <Controls />
-        </ReactFlow>
-      </WebAuthnRegistrationProvider>
-    </div>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            nodesDraggable={true}
+            nodesConnectable={false}
+            elementsSelectable={true}
+            proOptions={{ hideAttribution: true }}
+          >
+            <Background />
+            <Controls />
+          </ReactFlow>
+        </WebAuthnRegistrationProvider>
+      </div>
+    </>
   );
 };
 

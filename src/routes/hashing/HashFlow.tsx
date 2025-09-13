@@ -9,6 +9,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { getHashSteps } from "../../util/getHash";
 import "./HashFlow.css";
+import Header from "../../component/Header";
 
 const HashContext = React.createContext({
   input: "",
@@ -138,21 +139,24 @@ const HashFlow = () => {
   );
 
   return (
-    <div className="hashflow-container">
-      <HashContext.Provider
-        value={{ input, setInput, algorithm, setAlgorithm, hex: hashString }}
-      >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          proOptions={{ hideAttribution: true }}
+    <>
+      <Header />
+      <div className="hashflow-container">
+        <HashContext.Provider
+          value={{ input, setInput, algorithm, setAlgorithm, hex: hashString }}
         >
-          <Background />
-          <Controls />
-        </ReactFlow>
-      </HashContext.Provider>
-    </div>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            proOptions={{ hideAttribution: true }}
+          >
+            <Background />
+            <Controls />
+          </ReactFlow>
+        </HashContext.Provider>
+      </div>
+    </>
   );
 };
 
