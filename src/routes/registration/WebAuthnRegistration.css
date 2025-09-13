@@ -139,3 +139,76 @@
   background: #2b2b2b;
   color: #fff;
 }
+
+.node-with-hover {
+  position: relative;
+}
+
+.object-hover {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  margin-top: 8px;
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  max-width: 400px;
+  min-width: 300px;
+  max-height: 400px;
+  overflow: hidden;
+}
+
+.object-hover-content {
+  padding: 16px;
+  color: #fff;
+}
+
+.object-hover-content h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #64b5f6;
+  font-weight: 600;
+}
+
+.object-hover-content pre {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #e0e0e0;
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 300px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.object-hover::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #444;
+}
+
+.object-hover::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid rgba(0, 0, 0, 0.95);
+}

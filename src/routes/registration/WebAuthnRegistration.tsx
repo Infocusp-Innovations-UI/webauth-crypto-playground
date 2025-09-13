@@ -26,9 +26,31 @@ const RP_ID = "localhost";
 const RP_NAME = "infocusp.com";
 const expectedOrigin = "http://localhost:5173";
 
+function ObjectHover({
+  object,
+  title,
+  isVisible,
+}: {
+  object: any;
+  title: string;
+  isVisible: boolean;
+}) {
+  if (!isVisible || !object) return null;
+
+  return (
+    <div className="object-hover">
+      <div className="object-hover-content">
+        <h4>{title}</h4>
+        <pre>{JSON.stringify(object, null, 2)}</pre>
+      </div>
+    </div>
+  );
+}
+
 function UserInputNode() {
   const { username, setUsername, rpName, setRpName, challenge, setChallenge } =
     useWebAuthnRegistrationContext();
+  const [showHover, setShowHover] = useState(false);
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
@@ -47,8 +69,14 @@ function UserInputNode() {
     setChallenge(result);
   }, [setChallenge]);
 
+  const challengeObject = challenge ? { challenge, username, rpName } : null;
+
   return (
-    <div className="nodeCard">
+    <div
+      className="nodeCard node-with-hover"
+      onMouseEnter={() => setShowHover(true)}
+      onMouseLeave={() => setShowHover(false)}
+    >
       <div className="node-header node-header--purple">
         PUBLIC KEY INPUT (CLIENT)
       </div>
@@ -90,6 +118,11 @@ function UserInputNode() {
         </div>
       </div>
       <Handle type="source" position={Position.Right} />
+      <ObjectHover
+        object={challengeObject}
+        title="Generated Challenge Object"
+        isVisible={showHover}
+      />
     </div>
   );
 }
@@ -103,6 +136,7 @@ function PublicKeyGenerateNode() {
     setRegistrationOptions,
   } = useWebAuthnRegistrationContext();
   const { users } = useUserContext();
+  const [showHover, setShowHover] = useState(false);
 
   const createPublicKeyOptions = useCallback(async () => {
     if (!username || !rpName) {
@@ -141,7 +175,11 @@ function PublicKeyGenerateNode() {
   }, [username, rpName, challenge, users, setRegistrationOptions]);
 
   return (
-    <div className="nodeCard">
+    <div
+      className="nodeCard node-with-hover"
+      onMouseEnter={() => setShowHover(true)}
+      onMouseLeave={() => setShowHover(false)}
+    >
       <div className="node-header node-header--purple">
         PUBLIC KEY GENERATION (CLIENT)
       </div>
@@ -162,6 +200,11 @@ function PublicKeyGenerateNode() {
       </div>
       <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Right} />
+      <ObjectHover
+        object={registrationOptions}
+        title="Registration Options Object"
+        isVisible={showHover}
+      />
     </div>
   );
 }
@@ -172,6 +215,7 @@ function CredentialsNode() {
     authenticatorResponse,
     setAuthenticatorResponse,
   } = useWebAuthnRegistrationContext();
+  const [showHover, setShowHover] = useState(false);
 
   const createCredentials = useCallback(async () => {
     if (!registrationOptions) {
@@ -189,7 +233,11 @@ function CredentialsNode() {
   }, [registrationOptions, setAuthenticatorResponse]);
 
   return (
-    <div className="nodeCard">
+    <div
+      className="nodeCard node-with-hover"
+      onMouseEnter={() => setShowHover(true)}
+      onMouseLeave={() => setShowHover(false)}
+    >
       <div className="node-header node-header--purple">
         CREATE CREDENTIALS (CLIENT)
       </div>
@@ -212,6 +260,11 @@ function CredentialsNode() {
       </div>
       <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Bottom} />
+      <ObjectHover
+        object={authenticatorResponse}
+        title="Authenticator Response Object"
+        isVisible={showHover}
+      />
     </div>
   );
 }
@@ -311,6 +364,7 @@ function VerifyNode() {
     verificationResult,
     setVerificationResult,
   } = useWebAuthnRegistrationContext();
+  const [showHover, setShowHover] = useState(false);
 
   const verifyResponse = useCallback(async () => {
     if (!authenticatorResponse || !registrationOptions) {
@@ -336,7 +390,11 @@ function VerifyNode() {
   }, [authenticatorResponse, registrationOptions, setVerificationResult]);
 
   return (
-    <div className="nodeCard">
+    <div
+      className="nodeCard node-with-hover"
+      onMouseEnter={() => setShowHover(true)}
+      onMouseLeave={() => setShowHover(false)}
+    >
       <div className="node-header node-header--yellow">VERIFY (SERVER)</div>
       <div className="node-body">
         <div style={{ marginBottom: "10px" }}>
@@ -357,6 +415,11 @@ function VerifyNode() {
       </div>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Right} />
+      <ObjectHover
+        object={verificationResult}
+        title="Verification Result Object"
+        isVisible={showHover}
+      />
     </div>
   );
 }
@@ -411,14 +474,14 @@ const WebAuthnRegistration = () => {
       {
         id: "n5",
         type: "verifyNode",
-        position: { x: 700, y: 400 },
+        position: { x: 1000, y: 200 },
         data: {},
         draggable: true,
       },
       {
         id: "n6",
         type: "databaseSaveNode",
-        position: { x: 1050, y: 300 },
+        position: { x: 700, y: 600 },
         data: {},
         draggable: true,
       },
