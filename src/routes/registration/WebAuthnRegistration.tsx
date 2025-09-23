@@ -21,9 +21,9 @@ import "./WebAuthnRegistration.css";
 import Header from "../../component/Header";
 import { WebAuthnCredential } from "@simplewebauthn/types";
 
-const RP_ID = "localhost";
+const RP_ID = "webauth-crypto-playground";
 const RP_NAME = "infocusp.com";
-const expectedOrigin = "http://localhost:5173";
+const expectedOrigin = "https://webauth-crypto-playground.vercel.app/";
 
 function ObjectHover({
   object,
