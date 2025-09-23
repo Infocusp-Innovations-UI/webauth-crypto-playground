@@ -1,13 +1,11 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import {
   ReactFlow,
   Background,
-  Controls,
   Handle,
   Position,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { WebAuthnCredential } from "@simplewebauthn/types";
 import {
   generateRegistrationOptions,
   GenerateRegistrationOptionsOpts,
