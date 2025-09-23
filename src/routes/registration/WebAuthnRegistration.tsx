@@ -23,7 +23,7 @@ import { WebAuthnCredential } from "@simplewebauthn/types";
 
 const RP_ID = "webauth-crypto-playground.vercel.app";
 const RP_NAME = "infocusp.com";
-const expectedOrigin = "https://webauth-crypto-playground.vercel.app/";
+const expectedOrigin = "https://webauth-crypto-playground.vercel.app";
 
 function ObjectHover({
   object,
