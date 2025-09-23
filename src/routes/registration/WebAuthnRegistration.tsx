@@ -262,9 +262,57 @@ function GeneratedCredentialsNode() {
 }
 
 function DatabaseSaveNode() {
-  const { username, verificationResult } = useWebAuthnRegistrationContext();
-  const { users } = useUserContext();
+  const { username, authenticatorResponse, verificationResult } =
+    useWebAuthnRegistrationContext();
+  const { users, setUsers } = useUserContext();
   const [showHover, setShowHover] = useState(false);
+
+  const saveToDatabase = useCallback(() => {
+    if (!authenticatorResponse || !verificationResult?.verified) {
+      return;
+    }
+
+    const { registrationInfo } = verificationResult;
+    if (registrationInfo) {
+      const { credential } = registrationInfo;
+
+      const newCredential: WebAuthnCredential = {
+        id: credential.id,
+        publicKey: credential.publicKey,
+        counter: credential.counter,
+      };
+
+      setUsers((prevUsers) => {
+        const userIndex = prevUsers.findIndex((u) => u.username === username);
+        if (userIndex !== -1) {
+          const updatedUsers = [...prevUsers];
+          updatedUsers[userIndex] = {
+            ...updatedUsers[userIndex],
+            credentials: [
+              ...updatedUsers[userIndex].credentials,
+              newCredential,
+            ],
+          };
+          return updatedUsers;
+        } else {
+          return [
+            ...prevUsers,
+            {
+              id: Date.now().toString(),
+              username,
+              credentials: [newCredential],
+            },
+          ];
+        }
+      });
+    }
+  }, [username, authenticatorResponse, verificationResult, setUsers]);
+
+  useEffect(() => {
+    if (verificationResult?.verified) {
+      saveToDatabase();
+    }
+  }, [verificationResult, saveToDatabase]);
 
   return (
     <div
