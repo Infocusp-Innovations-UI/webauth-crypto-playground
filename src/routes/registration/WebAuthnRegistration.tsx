@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   ReactFlow,
   Background,
@@ -19,6 +19,7 @@ import {
 } from "../../context/WebAuthnRegistrationContext";
 import "./WebAuthnRegistration.css";
 import Header from "../../component/Header";
+import { WebAuthnCredential } from "@simplewebauthn/types";
 
 const RP_ID = "localhost";
 const RP_NAME = "infocusp.com";
