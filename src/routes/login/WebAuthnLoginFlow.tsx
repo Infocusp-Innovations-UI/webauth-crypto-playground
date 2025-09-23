@@ -19,7 +19,7 @@ import Header from "../../component/Header";
 import { useWebAuthnLoginContext, WebAuthnLoginProvider } from "../../context/WebAuthnLoginContext";
 
 const RP_ID = "webauth-crypto-playground.vercel.app";
-const expectedOrigin = "https://webauth-crypto-playground.vercel.app/";
+const expectedOrigin = "https://webauth-crypto-playground.vercel.app";
 
 function ObjectHover({ object, title, isVisible }: any) {
   if (!isVisible || !object) return null;
