@@ -5,8 +5,6 @@ interface WebAuthnRegistrationContextType {
   setUsername: (v: string) => void;
   rpName: string;
   setRpName: (v: string) => void;
-  challenge: string;
-  setChallenge: (v: string) => void;
   registrationOptions: any;
   setRegistrationOptions: (v: any) => void;
   authenticatorResponse: any;
@@ -21,8 +19,6 @@ const WebAuthnRegistrationContext =
     setUsername: (v: string) => {},
     rpName: "",
     setRpName: (v: string) => {},
-    challenge: "",
-    setChallenge: (v: string) => {},
     registrationOptions: null,
     setRegistrationOptions: (v: any) => {},
     authenticatorResponse: null,

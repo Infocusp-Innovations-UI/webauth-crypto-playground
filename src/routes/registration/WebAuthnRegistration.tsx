@@ -48,7 +48,7 @@ function ObjectHover({
 }
 
 function UserInputNode() {
-  const { username, setUsername, rpName, setRpName, challenge, setChallenge } =
+  const { username, setUsername, rpName, setRpName } =
     useWebAuthnRegistrationContext();
   const [showHover, setShowHover] = useState(false);
 
@@ -60,16 +60,7 @@ function UserInputNode() {
     setRpName(e.target.value);
   };
 
-  const generateChallenge = useCallback(() => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let result = "";
-    for (let i = 0; i < 10; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setChallenge(result);
-  }, [setChallenge]);
-
-  const challengeObject = challenge ? { challenge, username, rpName } : null;
+  const userInputObject = username && rpName ? { username, rpName } : null;
 
   return (
     <div
@@ -103,24 +94,14 @@ function UserInputNode() {
             onMouseDown={(e) => e.stopPropagation()}
           />
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <button
-            className="node-button"
-            onClick={generateChallenge}
-            disabled={!username || !rpName}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            Generate Challenge
-          </button>
-        </div>
         <div className="node-output">
-          Challenge: {challenge ? `${challenge}... ✓` : "Not generated"}
+          Status: {username && rpName ? "Ready ✓" : "Enter details"}
         </div>
       </div>
       <Handle type="source" position={Position.Right} />
       <ObjectHover
-        object={challengeObject}
-        title="Generated Challenge Object"
+        object={userInputObject}
+        title="User Input Object"
         isVisible={showHover}
       />
     </div>
@@ -128,24 +109,14 @@ function UserInputNode() {
 }
 
 function PublicKeyGenerateNode() {
-  const {
-    username,
-    rpName,
-    challenge,
-    registrationOptions,
-    setRegistrationOptions,
-  } = useWebAuthnRegistrationContext();
+  const { username, rpName, registrationOptions, setRegistrationOptions } =
+    useWebAuthnRegistrationContext();
   const { users } = useUserContext();
   const [showHover, setShowHover] = useState(false);
 
   const createPublicKeyOptions = useCallback(async () => {
     if (!username || !rpName) {
       alert("Please enter username and RP name first!");
-      return;
-    }
-
-    if (!challenge) {
-      alert("Please generate a challenge first!");
       return;
     }
 
@@ -172,7 +143,7 @@ function PublicKeyGenerateNode() {
 
     const options = await generateRegistrationOptions(opts);
     setRegistrationOptions(options);
-  }, [username, rpName, challenge, users, setRegistrationOptions]);
+  }, [username, rpName, users, setRegistrationOptions]);
 
   return (
     <div
@@ -180,15 +151,15 @@ function PublicKeyGenerateNode() {
       onMouseEnter={() => setShowHover(true)}
       onMouseLeave={() => setShowHover(false)}
     >
-      <div className="node-header node-header--purple">
-        PUBLIC KEY GENERATION (CLIENT)
+      <div className="node-header node-header--yellow">
+        PUBLIC KEY GENERATION (SERVER)
       </div>
       <div className="node-body">
         <div style={{ marginBottom: "10px" }}>
           <button
             className="node-button"
             onClick={createPublicKeyOptions}
-            disabled={!username || !rpName || !challenge}
+            disabled={!username || !rpName}
             onMouseDown={(e) => e.stopPropagation()}
           >
             Generate Public Key
@@ -291,59 +262,16 @@ function GeneratedCredentialsNode() {
 }
 
 function DatabaseSaveNode() {
-  const { username, authenticatorResponse, verificationResult } =
-    useWebAuthnRegistrationContext();
-  const { setUsers } = useUserContext();
-
-  const saveToDatabase = useCallback(() => {
-    if (!authenticatorResponse || !verificationResult?.verified) {
-      return;
-    }
-
-    const { registrationInfo } = verificationResult;
-    if (registrationInfo) {
-      const { credential } = registrationInfo;
-
-      const newCredential: WebAuthnCredential = {
-        id: credential.id,
-        publicKey: credential.publicKey,
-        counter: credential.counter,
-      };
-
-      setUsers((prevUsers) => {
-        const userIndex = prevUsers.findIndex((u) => u.username === username);
-        if (userIndex !== -1) {
-          const updatedUsers = [...prevUsers];
-          updatedUsers[userIndex] = {
-            ...updatedUsers[userIndex],
-            credentials: [
-              ...updatedUsers[userIndex].credentials,
-              newCredential,
-            ],
-          };
-          return updatedUsers;
-        } else {
-          return [
-            ...prevUsers,
-            {
-              id: Date.now().toString(),
-              username,
-              credentials: [newCredential],
-            },
-          ];
-        }
-      });
-    }
-  }, [username, authenticatorResponse, verificationResult, setUsers]);
-
-  useEffect(() => {
-    if (authenticatorResponse && verificationResult?.verified) {
-      saveToDatabase();
-    }
-  }, [authenticatorResponse, verificationResult, saveToDatabase]);
+  const { username, verificationResult } = useWebAuthnRegistrationContext();
+  const { users } = useUserContext();
+  const [showHover, setShowHover] = useState(false);
 
   return (
-    <div className="nodeCard">
+    <div
+      className="nodeCard node-with-hover"
+      onMouseEnter={() => setShowHover(true)}
+      onMouseLeave={() => setShowHover(false)}
+    >
       <div className="node-header node-header--yellow">DATABASE (SERVER)</div>
       <div className="node-body">
         <div className="node-output">
@@ -351,20 +279,57 @@ function DatabaseSaveNode() {
             ? `${username} - Saved to Local Storage ✓`
             : "Waiting for verification..."}
         </div>
+        <div
+          className="node-output"
+          style={{ marginTop: "5px", fontSize: "0.9em", color: "#666" }}
+        >
+          Total Users: {users.length}
+        </div>
       </div>
       <Handle type="target" position={Position.Top} />
+      <ObjectHover
+        object={users}
+        title="Users Database"
+        isVisible={showHover}
+      />
     </div>
   );
 }
 
 function VerifyNode() {
   const {
+    username,
     authenticatorResponse,
     registrationOptions,
     verificationResult,
     setVerificationResult,
   } = useWebAuthnRegistrationContext();
+  const { setUsers } = useUserContext();
   const [showHover, setShowHover] = useState(false);
+
+  const saveUserToDatabase = useCallback(
+    (verification: any) => {
+      if (!verification?.verified || !username) {
+        return;
+      }
+
+      setUsers((prevUsers) => {
+        const userExists = prevUsers.some((u) => u.username === username);
+        if (!userExists) {
+          return [
+            ...prevUsers,
+            {
+              id: Date.now().toString(),
+              username,
+              credentials: [],
+            },
+          ];
+        }
+        return prevUsers;
+      });
+    },
+    [username, setUsers]
+  );
 
   const verifyResponse = useCallback(async () => {
     if (!authenticatorResponse || !registrationOptions) {
@@ -382,12 +347,21 @@ function VerifyNode() {
       const verification = await verifyRegistrationResponse(opts);
       console.log(verification);
       setVerificationResult(verification);
+
+      if (verification.verified) {
+        saveUserToDatabase(verification);
+      }
     } catch (error) {
       const _error = error as Error;
       console.error("Registration verification failed:", _error);
       setVerificationResult({ verified: false, error: _error.message });
     }
-  }, [authenticatorResponse, registrationOptions, setVerificationResult]);
+  }, [
+    authenticatorResponse,
+    registrationOptions,
+    setVerificationResult,
+    saveUserToDatabase,
+  ]);
 
   return (
     <div
@@ -436,7 +410,6 @@ const nodeTypes = {
 const WebAuthnRegistration = () => {
   const [username, setUsername] = useState("");
   const [rpName, setRpName] = useState(RP_NAME);
-  const [challenge, setChallenge] = useState("");
   const [registrationOptions, setRegistrationOptions] = useState<any>(null);
   const [authenticatorResponse, setAuthenticatorResponse] = useState<any>(null);
   const [verificationResult, setVerificationResult] = useState<any>(null);
@@ -510,8 +483,6 @@ const WebAuthnRegistration = () => {
             setUsername,
             rpName,
             setRpName,
-            challenge,
-            setChallenge,
             registrationOptions,
             setRegistrationOptions,
             authenticatorResponse,
@@ -530,7 +501,6 @@ const WebAuthnRegistration = () => {
             proOptions={{ hideAttribution: true }}
           >
             <Background />
-            <Controls />
           </ReactFlow>
         </WebAuthnRegistrationProvider>
       </div>
