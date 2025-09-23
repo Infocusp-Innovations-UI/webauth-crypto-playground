@@ -21,7 +21,7 @@ import "./WebAuthnRegistration.css";
 import Header from "../../component/Header";
 import { WebAuthnCredential } from "@simplewebauthn/types";
 
-const RP_ID = "webauth-crypto-playground";
+const RP_ID = "webauth-crypto-playground.vercel.app";
 const RP_NAME = "infocusp.com";
 const expectedOrigin = "https://webauth-crypto-playground.vercel.app/";
 
