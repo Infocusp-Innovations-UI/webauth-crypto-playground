@@ -18,9 +18,6 @@ export default function Home() {
           <Link to="/webauthn-flow">WebAuthn Flow Demo</Link>
         </li>
         <li>
-          <Link to="/webauth">WebAuthn Registration</Link>
-        </li>
-        <li>
           <Link to="/login">WebAuthn Login</Link>
         </li>
       </ul>

@@ -61,6 +61,9 @@ interface WebAuthnContextType {
   publicKeyJwk: string;
   privateKeyJwk: string;
   verificationResult: string;
+  signature: string;
+  verified: boolean | null;
+  usedAlgorithm: Algorithm | null;
   handleRegister: () => void;
   handleVerify: () => void;
 }
@@ -73,6 +76,9 @@ const WebAuthnContext = React.createContext<WebAuthnContextType>({
   publicKeyJwk: "",
   privateKeyJwk: "",
   verificationResult: "",
+  signature: "",
+  verified: null,
+  usedAlgorithm: null,
   handleRegister: () => {},
   handleVerify: () => {},
 });
@@ -164,6 +170,135 @@ function VerificationNode() {
   );
 }
 
+function ChallengeNode() {
+  const { verificationResult } = useContext(WebAuthnContext);
+  const hasStartedVerification = verificationResult !== "";
+
+  return (
+    <div className="nodeCard nodeCard--wide">
+      <div className="node-header node-header--teal">1. CREATE CHALLENGE</div>
+      <div className="node-body">
+        <div className="node-code">
+          <code>const enc = new TextEncoder();</code>
+          <code>const challenge = enc.encode("webauthn-demo-challenge");</code>
+        </div>
+        {hasStartedVerification && (
+          <div className="node-output">
+            <label className="node-label">Output:</label>
+            <small>Uint8Array (23 bytes)</small>
+          </div>
+        )}
+      </div>
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
+    </div>
+  );
+}
+
+function SigningNode() {
+  const { verificationResult, usedAlgorithm, signature } = useContext(WebAuthnContext);
+  const hasStartedVerification = verificationResult !== "";
+  const algo = usedAlgorithm || "RS256";
+
+  return (
+    <div className="nodeCard nodeCard--wide">
+      <div className="node-header node-header--indigo">2. SIGN WITH PRIVATE KEY</div>
+      <div className="node-body">
+        <div className="node-code">
+          <code>crypto.subtle.sign(</code>
+          <code style={{ paddingLeft: '20px' }}>
+            {algo.startsWith("ES") 
+              ? `{ name: "ECDSA", hash: "SHA-256" },`
+              : `"RSASSA-PKCS1-v1_5",`
+            }
+          </code>
+          <code style={{ paddingLeft: '20px' }}>storedPrivateKey,</code>
+          <code style={{ paddingLeft: '20px' }}>challenge</code>
+          <code>)</code>
+        </div>
+        {hasStartedVerification && (
+          <div className="node-output">
+            <label className="node-label">Output (signature):</label>
+            <small style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}>
+              {signature || "Generating..."}
+            </small>
+          </div>
+        )}
+      </div>
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
+    </div>
+  );
+}
+
+function AlgorithmCheckNode() {
+  const { verificationResult, usedAlgorithm, verificationAlgorithm } = 
+    useContext(WebAuthnContext);
+  const hasStartedVerification = verificationResult !== "";
+  const algorithmsMatch = usedAlgorithm === verificationAlgorithm;
+
+  return (
+    <div className="nodeCard">
+      <div className="node-header node-header--yellow">3. ALGORITHM CHECK</div>
+      <div className="node-body">
+        <div className="node-code">
+          <code>if (usedAlgorithm === verificationAlgorithm)</code>
+        </div>
+        {hasStartedVerification && (
+          <div className={`node-output ${algorithmsMatch ? 'node-result--success' : 'node-result--error'}`}>
+            <label className="node-label">Result:</label>
+            <small>
+              {algorithmsMatch 
+                ? `✅ Match! Both ${usedAlgorithm}`
+                : `❌ Mismatch! ${usedAlgorithm} ≠ ${verificationAlgorithm}`
+              }
+            </small>
+          </div>
+        )}
+      </div>
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
+    </div>
+  );
+}
+
+function VerifyOperationNode() {
+  const { verificationResult, verificationAlgorithm, verified } = useContext(WebAuthnContext);
+  const hasStartedVerification = verificationResult !== "";
+  const isSuccess = verificationResult.includes("✅");
+
+  return (
+    <div className="nodeCard nodeCard--wide">
+      <div className="node-header node-header--pink">4. VERIFY SIGNATURE</div>
+      <div className="node-body">
+        <div className="node-code">
+          <code>crypto.subtle.verify(</code>
+          <code style={{ paddingLeft: '20px' }}>
+            {verificationAlgorithm.startsWith("ES") 
+              ? `{ name: "${verificationAlgorithm}", hash: "SHA-256" },`
+              : `"RSASSA-PKCS1-v1_5",`
+            }
+          </code>
+          <code style={{ paddingLeft: '20px' }}>storedPublicKey,</code>
+          <code style={{ paddingLeft: '20px' }}>signature,</code>
+          <code style={{ paddingLeft: '20px' }}>challenge</code>
+          <code>)</code>
+        </div>
+        {hasStartedVerification && verified !== null && (
+          <div className={`node-output ${isSuccess ? 'node-result--success' : 'node-result--error'}`}>
+            <label className="node-label">Output (verified):</label>
+            <small>
+              {String(verified)} {verified ? "✅" : "❌"}
+            </small>
+          </div>
+        )}
+      </div>
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
+    </div>
+  );
+}
+
 function ResultNode() {
   const { verificationResult, registrationAlgorithm, verificationAlgorithm } =
     useContext(WebAuthnContext);
@@ -198,6 +333,10 @@ const nodeTypes = {
   registrationNode: RegistrationNode,
   keyStorageNode: KeyStorageNode,
   verificationNode: VerificationNode,
+  challengeNode: ChallengeNode,
+  signingNode: SigningNode,
+  algorithmCheckNode: AlgorithmCheckNode,
+  verifyOperationNode: VerifyOperationNode,
   resultNode: ResultNode,
 };
 
@@ -209,6 +348,8 @@ const WebAuthnFlow = () => {
   const [publicKeyJwk, setPublicKeyJwk] = useState("");
   const [privateKeyJwk, setPrivateKeyJwk] = useState("");
   const [verificationResult, setVerificationResult] = useState("");
+  const [signature, setSignature] = useState("");
+  const [verified, setVerified] = useState<boolean | null>(null);
 
   // Store the actual CryptoKey objects
   const [storedPublicKey, setStoredPublicKey] = useState<CryptoKey | null>(null);
@@ -236,6 +377,8 @@ const WebAuthnFlow = () => {
       setStoredPrivateKey(keypair.privateKey);
       setUsedAlgorithm(registrationAlgorithm);
       setVerificationResult("");
+      setSignature("");
+      setVerified(null);
     } catch (err) {
       setVerificationResult(`❌ Registration failed: ${err}`);
     }
@@ -256,43 +399,53 @@ const WebAuthnFlow = () => {
       const challenge = enc.encode("webauthn-demo-challenge");
 
       // Sign with private key using registration algorithm
-      let signature: ArrayBuffer;
+      let signatureBuffer: ArrayBuffer;
       if (usedAlgorithm.startsWith("ES")) {
-        signature = await crypto.subtle.sign(
+        signatureBuffer = await crypto.subtle.sign(
           { name: registrationConfig.webcryptoName, hash: "SHA-256" },
           storedPrivateKey,
           challenge
         );
       } else {
-        signature = await crypto.subtle.sign(
+        signatureBuffer = await crypto.subtle.sign(
           registrationConfig.webcryptoName,
           storedPrivateKey,
           challenge
         );
       }
 
+      // Convert signature to hex string for display
+      const signatureArray = new Uint8Array(signatureBuffer);
+      const signatureHex = Array.from(signatureArray)
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+      const displaySig = `${signatureHex.slice(0, 16)}...${signatureHex.slice(-16)} (${signatureArray.length} bytes)`;
+      setSignature(displaySig);
+
       // Try to verify with selected verification algorithm
-      let verified = false;
+      let verifiedResult = false;
       
       if (usedAlgorithm === verificationAlgorithm) {
         // Algorithms match - verification should succeed
         if (verificationAlgorithm.startsWith("ES")) {
-          verified = await crypto.subtle.verify(
+          verifiedResult = await crypto.subtle.verify(
             { name: verificationConfig.webcryptoName, hash: "SHA-256" },
             storedPublicKey,
-            signature,
+            signatureBuffer,
             challenge
           );
         } else {
-          verified = await crypto.subtle.verify(
+          verifiedResult = await crypto.subtle.verify(
             verificationConfig.webcryptoName,
             storedPublicKey,
-            signature,
+            signatureBuffer,
             challenge
           );
         }
         
-        if (verified) {
+        setVerified(verifiedResult);
+        
+        if (verifiedResult) {
           setVerificationResult(
             `✅ SUCCESS: Algorithms match! (${usedAlgorithm})`
           );
@@ -303,11 +456,13 @@ const WebAuthnFlow = () => {
         }
       } else {
         // Algorithms don't match - show error
+        setVerified(false);
         setVerificationResult(
           `❌ FAIL: Algorithm mismatch!\nRegistered with ${usedAlgorithm}, trying to verify with ${verificationAlgorithm}`
         );
       }
     } catch (err) {
+      setVerified(false);
       setVerificationResult(
         `❌ ERROR: ${err instanceof Error ? err.message : "Verification failed"}\n` +
         `Registration: ${usedAlgorithm}, Verification: ${verificationAlgorithm}`
@@ -338,6 +493,35 @@ const WebAuthnFlow = () => {
         data: {},
         draggable: true,
       },
+      // Detailed verification process nodes
+      {
+        id: "n5",
+        type: "challengeNode",
+        position: { x: 670, y: 350 },
+        data: {},
+        draggable: true,
+      },
+      {
+        id: "n6",
+        type: "signingNode",
+        position: { x: 670, y: 550 },
+        data: {},
+        draggable: true,
+      },
+      {
+        id: "n7",
+        type: "algorithmCheckNode",
+        position: { x: 670, y: 850 },
+        data: {},
+        draggable: true,
+      },
+      {
+        id: "n8",
+        type: "verifyOperationNode",
+        position: { x: 670, y: 1000 },
+        data: {},
+        draggable: true,
+      },
       {
         id: "n4",
         type: "resultNode",
@@ -354,6 +538,12 @@ const WebAuthnFlow = () => {
       { id: "e1-2", source: "n1", target: "n2", animated: true },
       { id: "e2-3", source: "n2", target: "n3", animated: true },
       { id: "e3-4", source: "n3", target: "n4", animated: true },
+      // Detailed verification flow
+      { id: "e3-5", source: "n3", target: "n5", animated: true, type: "step" },
+      { id: "e5-6", source: "n5", target: "n6", animated: true },
+      { id: "e6-7", source: "n6", target: "n7", animated: true },
+      { id: "e7-8", source: "n7", target: "n8", animated: true },
+      { id: "e8-4", source: "n8", target: "n4", animated: true, type: "step" },
     ],
     []
   );
@@ -376,6 +566,9 @@ const WebAuthnFlow = () => {
           publicKeyJwk,
           privateKeyJwk,
           verificationResult,
+          signature,
+          verified,
+          usedAlgorithm,
           handleRegister,
           handleVerify,
         }}

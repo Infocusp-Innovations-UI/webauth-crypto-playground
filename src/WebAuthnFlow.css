@@ -71,6 +71,22 @@
   background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
 }
 
+.node-header--teal {
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+}
+
+.node-header--indigo {
+  background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+}
+
+.node-header--yellow {
+  background: linear-gradient(135deg, #ca8a04 0%, #eab308 100%);
+}
+
+.node-header--pink {
+  background: linear-gradient(135deg, #be185d 0%, #ec4899 100%);
+}
+
 .node-body {
   padding: 14px;
   background: #0f0f0f;
@@ -174,6 +190,37 @@
   font-size: 11px;
   color: rgba(255, 255, 255, 0.6);
   font-weight: 400;
+}
+
+.node-code {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.node-code code {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #a5f3fc;
+  background: #0a0a0a;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border-left: 2px solid #06b6d4;
+  display: block;
+}
+
+.node-output {
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.node-output small {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* React Flow custom styles */
