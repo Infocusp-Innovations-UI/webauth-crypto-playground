@@ -16,6 +16,9 @@ export default function Header() {
           <li>
             <Link to="/login">WebAuthn Login</Link>
           </li>
+          <li>
+            <Link to="/webauthn-flow">WebAuthn Flow Demo</Link>
+          </li>
         </ul>
       </nav>
     </header>
