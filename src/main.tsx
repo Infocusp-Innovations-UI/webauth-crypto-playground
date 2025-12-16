@@ -8,6 +8,7 @@ import "./index.css";
 import WebAuthnLogin from "./routes/login/WebAuthnLogin";
 import { UserProvider } from "./context/UserContext";
 import WebAuthnLoginFlow from "./routes/login/WebAuthnLoginFlow";
+import WebAuthnFlow from "./WebAuthnFlow";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Root element not found");
@@ -21,6 +22,9 @@ createRoot(rootElement).render(
           <Route path="/hashing" element={<HashFlow />} />
           <Route path="/registration" element={<WebAuthnRegistration />} />
           <Route path="/login" element={<WebAuthnLoginFlow />} />
+          <Route path="/webauthn-flow" element={<WebAuthnFlow />} />
+          <Route path="/webauth" element={<WebAuthnRegistration />} />
+          <Route path="/login" element={<WebAuthnLogin />} />
         </Routes>
       </UserProvider>
     </BrowserRouter>
